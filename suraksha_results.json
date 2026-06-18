@@ -1,0 +1,47 @@
+[
+    {
+        "circular_id": "CIRC_EC1",
+        "clause_text": "Banks must maintain a minimum capital adequacy ratio of 9%.",
+        "best_policy_id": "POL_EC1",
+        "score": 0.5637,
+        "gap_status": "confirmed",
+        "gap_type": "missing_clause",
+        "reason": "No matching compliance clause found. Highest match: 'Capital Policy' (weighted score 0.56 < 0.65)"
+    },
+    {
+        "circular_id": "CIRC_EC2",
+        "clause_text": "Banks shall implement multi-factor authentication for all customer logins.",
+        "best_policy_id": "POL_EC2",
+        "score": 0.4882,
+        "gap_status": "confirmed",
+        "gap_type": "missing_clause",
+        "reason": "No matching compliance clause found. Highest match: 'IT Access Policy' (weighted score 0.49 < 0.65)"
+    },
+    {
+        "circular_id": "CIRC_EC3",
+        "clause_text": "Regulated entities must ensure robust cyber security framework.",
+        "best_policy_id": "POL_EC3",
+        "score": 0.1874,
+        "gap_status": "confirmed",
+        "gap_type": "missing_clause",
+        "reason": "No matching compliance clause found. Highest match: 'Information Security Policy' (weighted score 0.19 < 0.65)"
+    },
+    {
+        "circular_id": "CIRC_EC4",
+        "clause_text": "All banks must report suspicious transactions to FIU-IND within 7 days.",
+        "best_policy_id": "POL_EC4",
+        "score": 0.0862,
+        "gap_status": "confirmed",
+        "gap_type": "missing_clause",
+        "reason": "No matching compliance clause found. Highest match: 'AML Policy' (weighted score 0.09 < 0.65)"
+    },
+    {
+        "circular_id": "CIRC_EC5",
+        "clause_text": "Board of Directors must review the risk policy quarterly.",
+        "best_policy_id": "POL_EC5",
+        "score": 0.2993,
+        "gap_status": "confirmed",
+        "gap_type": "missing_clause",
+        "reason": "No matching compliance clause found. Highest match: 'Risk Governance' (weighted score 0.30 < 0.65)"
+    }
+]
