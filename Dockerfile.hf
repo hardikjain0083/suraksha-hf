@@ -26,6 +26,7 @@ WORKDIR /app
 # ── Install Python deps ────────────────────────────────────────
 COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"
 
 # ── Copy application ───────────────────────────────────────────
 COPY --chown=user . .
