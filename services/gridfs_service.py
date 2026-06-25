@@ -17,3 +17,7 @@ async def download_file_from_gridfs(file_id: str):
     content = await grid_out.read()
     metadata = grid_out.metadata or {}
     return content, grid_out.filename, metadata.get("contentType", "application/octet-stream")
+
+async def delete_file_from_gridfs(file_id: str):
+    fs = AsyncIOMotorGridFSBucket(db.client.suraksha_maps, bucket_name="circulars")
+    await fs.delete(ObjectId(file_id))

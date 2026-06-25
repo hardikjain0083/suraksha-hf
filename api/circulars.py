@@ -7,7 +7,7 @@ import os
 
 from models.circular import CircularResponse
 from services.watcher import process_circular
-from services.gridfs_service import upload_file_to_gridfs, download_file_from_gridfs
+from services.gridfs_service import upload_file_to_gridfs, download_file_from_gridfs, delete_file_from_gridfs
 from services.circular_ids import generate_circular_id
 from services.gap_detector import detect_gaps_for_circular
 from api.auth import get_current_user
@@ -255,3 +255,43 @@ async def download_circular(circular_id: str, current_user: dict = Depends(get_c
         media_type=content_type or "application/octet-stream",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
+
+@router.delete("/{circular_id:path}")
+async def delete_circular(circular_id: str, current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") not in INGESTION_ROLES:
+        raise HTTPException(403, "Circular deletion access required")
+        
+    database = get_db()
+    
+    # 1. Fetch circular record to get gridfs_id
+    doc = await database.circulars.find_one({"circular_id": circular_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Circular not found")
+        
+    # 2. Delete file from GridFS
+    gridfs_id = doc.get("gridfs_id")
+    if gridfs_id:
+        try:
+            await delete_file_from_gridfs(gridfs_id)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to delete circular file from GridFS: {e}")
+            
+    # 3. Delete from gaps queue and archive
+    await database.gap_queue.delete_many({"circular_id": circular_id})
+    await database.gaps_archive.delete_many({"circular_id": circular_id})
+    
+    # 4. Delete circular record from DB
+    await database.circulars.delete_one({"circular_id": circular_id})
+    
+    # 5. Log deletion to audit ledger
+    from services.audit_logger import append_audit_log
+    await append_audit_log(
+        database=database,
+        action="delete_circular",
+        actor_id=current_user["emp_id"],
+        details=f"Deleted circular {circular_id} ({doc.get('circular_number', 'Unknown')}) and associated gaps",
+        target_id=circular_id
+    )
+    
+    return {"status": "success", "message": f"Circular {circular_id} deleted successfully"}
