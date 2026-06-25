@@ -288,10 +288,12 @@ async def delete_circular(circular_id: str, current_user: dict = Depends(get_cur
     from services.audit_logger import append_audit_log
     await append_audit_log(
         database=database,
-        action="delete_circular",
-        actor_id=current_user["emp_id"],
-        details=f"Deleted circular {circular_id} ({doc.get('circular_number', 'Unknown')}) and associated gaps",
-        target_id=circular_id
+        action_type="delete_circular",
+        target_type="circular",
+        target_id=circular_id,
+        user_id=current_user["emp_id"],
+        user_name=current_user.get("full_name", "System"),
+        details={"message": f"Deleted circular {circular_id} ({doc.get('circular_number', 'Unknown')}) and associated gaps"}
     )
     
     return {"status": "success", "message": f"Circular {circular_id} deleted successfully"}
